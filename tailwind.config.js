@@ -8,7 +8,7 @@ export default {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        glow: '0 24px 70px rgba(59, 130, 246, 0.18)',
+        glow: '0 24px 70px rgba(15, 23, 42, 0.18)',
       },
     },
   },

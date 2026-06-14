@@ -30,7 +30,7 @@ function ProjectCard({ project }) {
 
   return (
     <article className="panel grid h-full overflow-hidden lg:grid-cols-[0.85fr_1.15fr]">
-      <div className="h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 lg:col-span-2" />
+      <div className="h-1 bg-gradient-to-r from-slate-900 via-emerald-600 to-sky-700 dark:from-slate-700 dark:via-emerald-400 dark:to-sky-500 lg:col-span-2" />
 
       <div className="flex flex-col p-6 sm:p-8">
         <h3 className="text-2xl font-bold text-slate-950 dark:text-white">{project.title}</h3>
@@ -40,7 +40,7 @@ function ProjectCard({ project }) {
           {project.techStack.map((tech) => (
             <span
               key={tech}
-              className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-200"
+              className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-200"
             >
               {tech}
             </span>
@@ -57,7 +57,7 @@ function ProjectCard({ project }) {
                 href={href}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-blue-700 dark:bg-white dark:text-slate-950 dark:hover:bg-blue-100"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white smooth-lift hover:bg-emerald-700 dark:bg-white dark:text-slate-950 dark:hover:bg-emerald-100"
               >
                 <Icon size={17} />
                 {label}
@@ -67,7 +67,7 @@ function ProjectCard({ project }) {
                 key={label}
                 type="button"
                 disabled
-                className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500"
+                className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-500"
                 title={`${label} link coming soon`}
               >
                 <Icon size={17} />
@@ -79,8 +79,8 @@ function ProjectCard({ project }) {
       </div>
 
       {screenshots.length > 0 && (
-        <div className="border-t border-slate-200 bg-slate-100 p-3 dark:border-white/10 dark:bg-slate-950/80 sm:p-4 lg:border-l lg:border-t-0">
-          <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-inner dark:border-white/10 dark:bg-slate-900 lg:h-full lg:min-h-[360px] lg:aspect-auto">
+        <div className="border-t border-slate-200 bg-slate-100 p-3 dark:border-slate-800 dark:bg-slate-950/80 sm:p-4 lg:border-l lg:border-t-0">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-inner dark:border-slate-800 dark:bg-slate-900 lg:h-full lg:min-h-[360px] lg:aspect-auto">
             <AnimatePresence mode="wait">
               <motion.img
                 key={screenshotSrc}
@@ -96,7 +96,7 @@ function ProjectCard({ project }) {
             </AnimatePresence>
 
             {screenshots.length > 1 && (
-              <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2 rounded-full bg-slate-950/60 px-3 py-2 backdrop-blur">
+              <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2 rounded-lg bg-slate-950/70 px-3 py-2 backdrop-blur">
                 {screenshots.map((screenshot, index) => {
                   const slideKey = typeof screenshot === 'string' ? screenshot : screenshot.src;
 
@@ -105,8 +105,8 @@ function ProjectCard({ project }) {
                       key={slideKey}
                       type="button"
                       onClick={() => setActiveSlide(index)}
-                      className={`h-2 rounded-full transition-all ${
-                        activeSlide === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'
+                      className={`h-2 rounded-full transition-all duration-300 ease-out ${
+                        activeSlide === index ? 'w-6 bg-emerald-300' : 'w-2 bg-white/50 hover:bg-white/80'
                       }`}
                       aria-label={`Show ${project.title} screenshot ${index + 1}`}
                     />

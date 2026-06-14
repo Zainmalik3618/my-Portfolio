@@ -16,7 +16,7 @@ function Navbar({ theme, onToggleTheme }) {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/80">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90">
       <nav className="section-container flex h-16 items-center justify-between">
         <a href="#home" className="text-lg font-bold tracking-tight text-slate-950 dark:text-white" onClick={closeMenu}>
           My Portfolio
@@ -27,7 +27,7 @@ function Navbar({ theme, onToggleTheme }) {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-slate-600 transition hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-300"
+              className="text-sm font-medium text-slate-600 smooth-motion hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300"
             >
               {link.label}
             </a>
@@ -40,7 +40,7 @@ function Navbar({ theme, onToggleTheme }) {
           <button
             type="button"
             onClick={() => setIsOpen((current) => !current)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm dark:border-white/10 dark:bg-slate-900 dark:text-slate-200"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm smooth-lift dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
             aria-label="Toggle navigation menu"
           >
             {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -49,14 +49,14 @@ function Navbar({ theme, onToggleTheme }) {
       </nav>
 
       {isOpen && (
-        <div className="border-t border-slate-200 bg-white px-5 py-4 shadow-lg dark:border-white/10 dark:bg-slate-950 md:hidden">
+        <div className="border-t border-slate-200 bg-white px-5 py-4 shadow-lg dark:border-slate-800 dark:bg-slate-950 md:hidden">
           <div className="mx-auto flex max-w-6xl flex-col gap-2">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={closeMenu}
-                className="rounded-xl px-3 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-blue-600 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-blue-300"
+                className="rounded-lg px-3 py-3 text-sm font-medium text-slate-700 smooth-motion hover:bg-slate-100 hover:text-emerald-700 dark:text-slate-200 dark:hover:bg-slate-900 dark:hover:text-emerald-300"
               >
                 {link.label}
               </a>

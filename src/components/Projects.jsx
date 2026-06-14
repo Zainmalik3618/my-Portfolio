@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { projects } from '../data/projects';
 import ProjectCard from './ProjectCard';
 
+const sectionMotion = { duration: 0.7, ease: [0.22, 1, 0.36, 1] };
+
 function Projects() {
   return (
     <section id="projects" className="py-20">
@@ -20,7 +22,7 @@ function Projects() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.55 }}
+          transition={sectionMotion}
           className="mt-10 grid gap-6"
         >
           {projects.map((project) => (
