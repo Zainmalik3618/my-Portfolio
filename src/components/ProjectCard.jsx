@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ExternalLink, Github } from 'lucide-react';
 
+const getScreenshotSrc = (screenshot) => (typeof screenshot === 'string' ? screenshot : screenshot?.src);
+
 function ProjectCard({ project }) {
   const screenshots = project.screenshots || [];
+  const screenshotSources = useMemo(() => screenshots.map(getScreenshotSrc).filter(Boolean), [screenshots]);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [loadedScreenshots, setLoadedScreenshots] = useState(() => new Set());
 
   const actions = [
     { label: 'GitHub', href: project.githubUrl, icon: Github },
@@ -12,17 +16,56 @@ function ProjectCard({ project }) {
   ];
 
   useEffect(() => {
+    if (screenshotSources.length === 0) return undefined;
+
+    let isMounted = true;
+    setLoadedScreenshots(new Set());
+
+    screenshotSources.forEach((src) => {
+      const image = new Image();
+
+      const markLoaded = () => {
+        if (!isMounted) return;
+
+        setLoadedScreenshots((currentLoaded) => {
+          const nextLoaded = new Set(currentLoaded);
+          nextLoaded.add(src);
+          return nextLoaded;
+        });
+      };
+
+      image.onload = markLoaded;
+      image.onerror = markLoaded;
+      image.decoding = 'async';
+      image.src = src;
+
+      if (image.complete) {
+        markLoaded();
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [screenshotSources]);
+
+  useEffect(() => {
     if (screenshots.length <= 1) return undefined;
 
     const slideTimer = window.setInterval(() => {
-      setActiveSlide((currentSlide) => (currentSlide + 1) % screenshots.length);
+      setActiveSlide((currentSlide) => {
+        const nextSlide = (currentSlide + 1) % screenshots.length;
+        const nextScreenshot = screenshotSources[nextSlide];
+
+        return loadedScreenshots.has(nextScreenshot) ? nextSlide : currentSlide;
+      });
     }, 3500);
 
     return () => window.clearInterval(slideTimer);
-  }, [screenshots.length]);
+  }, [loadedScreenshots, screenshotSources, screenshots.length]);
 
   const currentScreenshot = screenshots[activeSlide];
-  const screenshotSrc = typeof currentScreenshot === 'string' ? currentScreenshot : currentScreenshot?.src;
+  const screenshotSrc = getScreenshotSrc(currentScreenshot);
   const screenshotAlt =
     typeof currentScreenshot === 'string'
       ? `${project.title} screenshot ${activeSlide + 1}`
@@ -91,7 +134,9 @@ function ProjectCard({ project }) {
                 exit={{ opacity: 0, scale: 0.98, x: -24 }}
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
                 className="h-full w-full object-contain"
-                loading="lazy"
+                decoding="async"
+                fetchPriority={activeSlide === 0 ? 'high' : 'auto'}
+                loading="eager"
               />
             </AnimatePresence>
 
