@@ -1,12 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDownToLine, Code2, Github, Linkedin, Mail, Send, UserRound } from 'lucide-react';
 
 const PROFILE_IMAGE = '/profile.jpg';
 const sectionMotion = { duration: 0.85, ease: [0.22, 1, 0.36, 1] };
+const ROLE_TEXT = 'Backend Web Developer | PERN Stack Developer';
 
 function Hero() {
   const [showProfileImage, setShowProfileImage] = useState(true);
+  const [typedRole, setTypedRole] = useState('');
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduceMotion) {
+      setTypedRole(ROLE_TEXT);
+      return undefined;
+    }
+
+    let characterIndex = 0;
+    const typingInterval = window.setInterval(() => {
+      characterIndex += 1;
+      setTypedRole(ROLE_TEXT.slice(0, characterIndex));
+
+      if (characterIndex >= ROLE_TEXT.length) {
+        window.clearInterval(typingInterval);
+      }
+    }, 55);
+
+    return () => window.clearInterval(typingInterval);
+  }, []);
 
   const socialLinks = [
     { label: 'GitHub', href: ' https://github.com/Zainmalik3618', icon: Github },
@@ -30,7 +53,8 @@ function Hero() {
             Zain Ul Abideen Malik
           </h1>
           <p className="mt-5 text-xl font-semibold text-slate-700 dark:text-slate-200 sm:text-2xl">
-            Backend Web Developer | PERN Stack Developer
+            <span>{typedRole}</span>
+            <span className="typing-cursor ml-1 inline-block h-[1em] w-0.5 translate-y-0.5 bg-slate-700 align-baseline dark:bg-slate-200" />
           </p>
           <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 dark:text-slate-300 sm:text-lg">
             I build clean, scalable, and user-friendly web applications using PostgreSQL, Express.js, React.js, and

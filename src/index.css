@@ -46,4 +46,20 @@
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-emerald-500/70 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-950;
   }
+
+  .typing-cursor {
+    animation: cursor-blink 0.8s step-end infinite;
+  }
+}
+
+@keyframes cursor-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+  }
 }
