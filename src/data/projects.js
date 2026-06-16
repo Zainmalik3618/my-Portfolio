@@ -13,7 +13,7 @@ export const projects = [
       { src: '/projects/calmconnect/Admin.png', alt: 'CalmConnect AI Admin Dashboard' }
     ],
     githubUrl: 'https://github.com/Zainmalik3618/CalmConnect-AI',
-    liveUrl: '',
+    liveUrl: 'https://calm-connect-ai.vercel.app/',
   },
   {
     title: 'Currency Exchange',
