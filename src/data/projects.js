@@ -26,6 +26,6 @@ export const projects = [
       { src: '/projects/currencyexchange/SecondScreenshot.png', alt: 'Second' }
     ],
     githubUrl: 'https://github.com/Zainmalik3618/currency-Exchange',
-    liveUrl: '',
+    liveUrl: 'https://currency-exchange-silk-eight.vercel.app/',
   },
 ];
