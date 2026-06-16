@@ -7,9 +7,10 @@ export const projects = [
     screenshots: [
       // Add your images inside public/projects/calmconnect/ and update these paths.
       // Example: { src: '/projects/calmconnect/dashboard.png', alt: 'CalmConnect AI dashboard' },
-      { src: '/projects/calmconnect/PatientDashboard.png', alt: 'CalmConnect AI patient dashboard' },
-      { src: '/projects/calmconnect/PsychiatristDashboard.png', alt: 'CalmConnect AI psychiatrist dashboard' },
-      { src: '/projects/calmconnect/AdminDashboard.png', alt: 'CalmConnect AI admin dashboard' }
+      { src: '/projects/calmconnect/Signin.png', alt: 'CalmConnect AI Home page' },
+      { src: '/projects/calmconnect/Patient.png', alt: 'CalmConnect AI Patient Dashboard' },
+      { src: '/projects/calmconnect/Psychiatrist.png', alt: 'CalmConnect AI Psychiatrist Dashboard' },
+      { src: '/projects/calmconnect/Admin.png', alt: 'CalmConnect AI Admin Dashboard' }
     ],
     githubUrl: 'https://github.com/Zainmalik3618/CalmConnect-AI',
     liveUrl: '',
