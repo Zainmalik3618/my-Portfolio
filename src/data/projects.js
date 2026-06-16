@@ -14,4 +14,18 @@ export const projects = [
     githubUrl: 'https://github.com/Zainmalik3618/CalmConnect-AI',
     liveUrl: '',
   },
+  {
+    title: 'Currency Exchange',
+    description:
+      "An app built to show currency exchange and its rate change using SVG chart using Frankfurter's API.",
+    techStack: ['HTML', 'CSS', 'JavaScript'],
+    screenshots: [
+      // Add your images inside public/projects/calmconnect/ and update these paths.
+      // Example: { src: '/projects/calmconnect/dashboard.png', alt: 'CalmConnect AI dashboard' },
+      { src: '/projects/currencyexchange/FirstScreenshot.png', alt: 'First' },
+      { src: '/projects/currencyexchange/SecondScreenshot.png', alt: 'Second' }
+    ],
+    githubUrl: 'https://github.com/Zainmalik3618/currency-Exchange',
+    liveUrl: '',
+  },
 ];
