@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ExternalLink, Github } from 'lucide-react';
 
 const getScreenshotSrc = (screenshot) => (typeof screenshot === 'string' ? screenshot : screenshot?.src);
@@ -13,13 +12,6 @@ function ProjectCard({ project }) {
     { label: 'GitHub', href: project.githubUrl, icon: Github },
     { label: 'Live Demo', href: project.liveUrl, icon: ExternalLink },
   ];
-
-  const currentScreenshot = screenshots[activeSlide];
-  const screenshotSrc = getScreenshotSrc(currentScreenshot);
-  const screenshotAlt =
-    typeof currentScreenshot === 'string'
-      ? `${project.title} screenshot ${activeSlide + 1}`
-      : currentScreenshot?.alt || `${project.title} screenshot ${activeSlide + 1}`;
 
   const showPreviousSlide = () => {
     setActiveSlide((currentSlide) => (currentSlide - 1 + screenshots.length) % screenshots.length);
@@ -127,28 +119,36 @@ function ProjectCard({ project }) {
             role={screenshots.length > 1 ? 'region' : undefined}
             aria-label={screenshots.length > 1 ? `${project.title} screenshot gallery` : undefined}
           >
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={screenshotSrc}
-                src={screenshotSrc}
-                alt={screenshotAlt}
-                initial={{ opacity: 0, scale: 1.03, x: 24 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.98, x: -24 }}
-                transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-                className="h-full w-full object-contain"
-                decoding="async"
-                fetchPriority={activeSlide === 0 ? 'high' : 'auto'}
-                loading="eager"
-              />
-            </AnimatePresence>
+            {screenshots.map((screenshot, index) => {
+              const src = getScreenshotSrc(screenshot);
+              const alt =
+                typeof screenshot === 'string'
+                  ? `${project.title} screenshot ${index + 1}`
+                  : screenshot?.alt || `${project.title} screenshot ${index + 1}`;
+              const isActive = activeSlide === index;
+
+              return (
+                <img
+                  key={src}
+                  src={src}
+                  alt={alt}
+                  className={`absolute inset-0 h-full w-full object-contain transition-[opacity,transform] duration-200 ease-out ${
+                    isActive ? 'z-10 scale-100 opacity-100' : 'pointer-events-none scale-[1.005] opacity-0'
+                  }`}
+                  decoding="async"
+                  fetchPriority={index === 0 ? 'high' : 'auto'}
+                  loading="eager"
+                  aria-hidden={!isActive}
+                />
+              );
+            })}
 
             {screenshots.length > 1 && (
               <>
                 <button
                   type="button"
                   onClick={showPreviousSlide}
-                  className="absolute left-3 top-1/2 hidden size-10 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-slate-950/35 text-white shadow-md backdrop-blur-sm transition hover:scale-105 hover:bg-slate-950/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:grid"
+                  className="absolute left-3 top-1/2 z-20 hidden size-10 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-slate-950/35 text-white shadow-md backdrop-blur-sm transition hover:scale-105 hover:bg-slate-950/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:grid"
                   aria-label={`Show previous ${project.title} screenshot`}
                 >
                   <ChevronLeft size={24} aria-hidden="true" />
@@ -157,13 +157,13 @@ function ProjectCard({ project }) {
                 <button
                   type="button"
                   onClick={showNextSlide}
-                  className="absolute right-3 top-1/2 hidden size-10 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-slate-950/35 text-white shadow-md backdrop-blur-sm transition hover:scale-105 hover:bg-slate-950/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:grid"
+                  className="absolute right-3 top-1/2 z-20 hidden size-10 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-slate-950/35 text-white shadow-md backdrop-blur-sm transition hover:scale-105 hover:bg-slate-950/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:grid"
                   aria-label={`Show next ${project.title} screenshot`}
                 >
                   <ChevronRight size={24} aria-hidden="true" />
                 </button>
 
-                <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2 rounded-lg border border-white/30 bg-slate-950/35 px-3 py-2 shadow-md backdrop-blur-sm">
+                <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-2 rounded-lg border border-white/30 bg-slate-950/35 px-3 py-2 shadow-md backdrop-blur-sm">
                   {screenshots.map((screenshot, index) => {
                     const slideKey = typeof screenshot === 'string' ? screenshot : screenshot.src;
 
