@@ -1,68 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ExternalLink, Github } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink, Github } from 'lucide-react';
 
 const getScreenshotSrc = (screenshot) => (typeof screenshot === 'string' ? screenshot : screenshot?.src);
 
 function ProjectCard({ project }) {
   const screenshots = project.screenshots || [];
-  const screenshotSources = useMemo(() => screenshots.map(getScreenshotSrc).filter(Boolean), [screenshots]);
   const [activeSlide, setActiveSlide] = useState(0);
-  const [loadedScreenshots, setLoadedScreenshots] = useState(() => new Set());
+  const touchStart = useRef(null);
 
   const actions = [
     { label: 'GitHub', href: project.githubUrl, icon: Github },
     { label: 'Live Demo', href: project.liveUrl, icon: ExternalLink },
   ];
-
-  useEffect(() => {
-    if (screenshotSources.length === 0) return undefined;
-
-    let isMounted = true;
-    setLoadedScreenshots(new Set());
-
-    screenshotSources.forEach((src) => {
-      const image = new Image();
-
-      const markLoaded = () => {
-        if (!isMounted) return;
-
-        setLoadedScreenshots((currentLoaded) => {
-          const nextLoaded = new Set(currentLoaded);
-          nextLoaded.add(src);
-          return nextLoaded;
-        });
-      };
-
-      image.onload = markLoaded;
-      image.onerror = markLoaded;
-      image.decoding = 'async';
-      image.src = src;
-
-      if (image.complete) {
-        markLoaded();
-      }
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [screenshotSources]);
-
-  useEffect(() => {
-    if (screenshots.length <= 1) return undefined;
-
-    const slideTimer = window.setInterval(() => {
-      setActiveSlide((currentSlide) => {
-        const nextSlide = (currentSlide + 1) % screenshots.length;
-        const nextScreenshot = screenshotSources[nextSlide];
-
-        return loadedScreenshots.has(nextScreenshot) ? nextSlide : currentSlide;
-      });
-    }, 3500);
-
-    return () => window.clearInterval(slideTimer);
-  }, [loadedScreenshots, screenshotSources, screenshots.length]);
 
   const currentScreenshot = screenshots[activeSlide];
   const screenshotSrc = getScreenshotSrc(currentScreenshot);
@@ -70,6 +20,48 @@ function ProjectCard({ project }) {
     typeof currentScreenshot === 'string'
       ? `${project.title} screenshot ${activeSlide + 1}`
       : currentScreenshot?.alt || `${project.title} screenshot ${activeSlide + 1}`;
+
+  const showPreviousSlide = () => {
+    setActiveSlide((currentSlide) => (currentSlide - 1 + screenshots.length) % screenshots.length);
+  };
+
+  const showNextSlide = () => {
+    setActiveSlide((currentSlide) => (currentSlide + 1) % screenshots.length);
+  };
+
+  const handleSlideshowKeyDown = (event) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      showPreviousSlide();
+    }
+
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      showNextSlide();
+    }
+  };
+
+  const handleTouchStart = (event) => {
+    const touch = event.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (event) => {
+    if (!touchStart.current) return;
+
+    const touch = event.changedTouches[0];
+    const distanceX = touch.clientX - touchStart.current.x;
+    const distanceY = touch.clientY - touchStart.current.y;
+    touchStart.current = null;
+
+    if (Math.abs(distanceX) < 50 || Math.abs(distanceX) <= Math.abs(distanceY)) return;
+
+    if (distanceX > 0) {
+      showPreviousSlide();
+    } else {
+      showNextSlide();
+    }
+  };
 
   return (
     <article className="panel grid h-full overflow-hidden lg:grid-cols-[0.85fr_1.15fr]">
@@ -123,7 +115,18 @@ function ProjectCard({ project }) {
 
       {screenshots.length > 0 && (
         <div className="border-t border-slate-200 bg-slate-100 p-3 dark:border-slate-800 dark:bg-slate-950/80 sm:p-4 lg:border-l lg:border-t-0">
-          <div className="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-inner dark:border-slate-800 dark:bg-slate-900 lg:h-full lg:min-h-[360px] lg:aspect-auto">
+          <div
+            className="group relative aspect-[16/10] touch-pan-y overflow-hidden rounded-lg border border-slate-200 bg-white shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:border-slate-800 dark:bg-slate-900 dark:focus-visible:ring-offset-slate-950 lg:h-full lg:min-h-[360px] lg:aspect-auto"
+            onKeyDown={handleSlideshowKeyDown}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={() => {
+              touchStart.current = null;
+            }}
+            tabIndex={screenshots.length > 1 ? 0 : undefined}
+            role={screenshots.length > 1 ? 'region' : undefined}
+            aria-label={screenshots.length > 1 ? `${project.title} screenshot gallery` : undefined}
+          >
             <AnimatePresence mode="wait">
               <motion.img
                 key={screenshotSrc}
@@ -141,23 +144,44 @@ function ProjectCard({ project }) {
             </AnimatePresence>
 
             {screenshots.length > 1 && (
-              <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2 rounded-lg bg-slate-950/70 px-3 py-2 backdrop-blur">
-                {screenshots.map((screenshot, index) => {
-                  const slideKey = typeof screenshot === 'string' ? screenshot : screenshot.src;
+              <>
+                <button
+                  type="button"
+                  onClick={showPreviousSlide}
+                  className="absolute left-3 top-1/2 hidden size-10 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-slate-950/35 text-white shadow-md backdrop-blur-sm transition hover:scale-105 hover:bg-slate-950/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:grid"
+                  aria-label={`Show previous ${project.title} screenshot`}
+                >
+                  <ChevronLeft size={24} aria-hidden="true" />
+                </button>
 
-                  return (
-                    <button
-                      key={slideKey}
-                      type="button"
-                      onClick={() => setActiveSlide(index)}
-                      className={`h-2 rounded-full transition-all duration-300 ease-out ${
-                        activeSlide === index ? 'w-6 bg-emerald-300' : 'w-2 bg-white/50 hover:bg-white/80'
-                      }`}
-                      aria-label={`Show ${project.title} screenshot ${index + 1}`}
-                    />
-                  );
-                })}
-              </div>
+                <button
+                  type="button"
+                  onClick={showNextSlide}
+                  className="absolute right-3 top-1/2 hidden size-10 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-slate-950/35 text-white shadow-md backdrop-blur-sm transition hover:scale-105 hover:bg-slate-950/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:grid"
+                  aria-label={`Show next ${project.title} screenshot`}
+                >
+                  <ChevronRight size={24} aria-hidden="true" />
+                </button>
+
+                <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2 rounded-lg border border-white/30 bg-slate-950/35 px-3 py-2 shadow-md backdrop-blur-sm">
+                  {screenshots.map((screenshot, index) => {
+                    const slideKey = typeof screenshot === 'string' ? screenshot : screenshot.src;
+
+                    return (
+                      <button
+                        key={slideKey}
+                        type="button"
+                        onClick={() => setActiveSlide(index)}
+                        className={`h-2 rounded-full transition-all duration-300 ease-out ${
+                          activeSlide === index ? 'w-6 bg-emerald-300' : 'w-2 bg-white/50 hover:bg-white/80'
+                        }`}
+                        aria-label={`Show ${project.title} screenshot ${index + 1}`}
+                        aria-current={activeSlide === index ? 'true' : undefined}
+                      />
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
         </div>

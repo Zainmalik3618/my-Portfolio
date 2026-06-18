@@ -6,9 +6,27 @@ import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import { projects } from './data/projects';
+
+const preloadedProjectImages = new Map();
 
 function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+
+  useEffect(() => {
+    projects.forEach((project) => {
+      project.screenshots?.forEach((screenshot) => {
+        const src = typeof screenshot === 'string' ? screenshot : screenshot?.src;
+
+        if (!src || preloadedProjectImages.has(src)) return;
+
+        const image = new Image();
+        image.decoding = 'async';
+        image.src = src;
+        preloadedProjectImages.set(src, image);
+      });
+    });
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
