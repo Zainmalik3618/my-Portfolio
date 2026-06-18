@@ -29,4 +29,19 @@ export const projects = [
     githubUrl: 'https://github.com/Zainmalik3618/currency-Exchange',
     liveUrl: 'https://currency-exchange-silk-eight.vercel.app/',
   },
+  {
+    title: 'Tower of Hanoi Game',
+    description:
+      "Built the cool Tower of Hanoi game using React to learn cool animations.",
+    techStack: ['React.js'],
+    screenshots: [
+      // Add your images inside public/projects/calmconnect/ and update these paths.
+      // Example: { src: '/projects/calmconnect/dashboard.png', alt: 'CalmConnect AI dashboard' },
+      { src: '/projects/towerofhanoi/1.png', alt: 'First' },
+      { src: '/projects/towerofhanoi/2.png', alt: 'Second' },
+      { src: '/projects/towerofhanoi/3.png', alt: 'Third' }
+    ],
+    githubUrl: 'https://github.com/Zainmalik3618/Tower-of-Hanoi',
+    liveUrl: 'https://tower-of-hanoi-ashy.vercel.app/',
+  },
 ];
